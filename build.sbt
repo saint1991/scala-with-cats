@@ -1,7 +1,7 @@
 
 lazy val root = (project in file("cats"))
   .settings(
-    name := "cats-sandbox",
+    name := "cats",
     version := "0.1.0",
     scalaVersion := "2.12.4",
     libraryDependencies ++= Seq(
@@ -18,8 +18,6 @@ lazy val root = (project in file("cats"))
       "-Xfatal-warnings",
       "-Ypartial-unification"
     ),
-
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
+    transitiveClassifiers := Seq("sources"),
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3"),
   )
-
-
