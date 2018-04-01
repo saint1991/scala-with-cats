@@ -24,15 +24,21 @@ object Main extends App {
 
 object Exercise1 {
 
-  // There are 2 Monoids for Boolean
-  // Xor does not have identity element so that it is Semigroup.
   implicit val and: Monoid[Boolean] = new Monoid[Boolean] {
     override def combine(x: Boolean, y: Boolean): Boolean = x && y
-    override def identity: Boolean = true
+    override def empty: Boolean = true
   }
   implicit val or: Monoid[Boolean]  = new Monoid[Boolean] {
     override def combine(x: Boolean, y: Boolean): Boolean = x || y
-    override def identity: Boolean = false
+    override def empty: Boolean = false
+  }
+  implicit val xor: Monoid[Boolean] = new Monoid[Boolean] {
+    override def combine(x: Boolean, y: Boolean): Boolean = (x && !y) || (!x && y)
+    override def empty: Boolean = false
+  }
+  implicit val xnor: Monoid[Boolean] = new Monoid[Boolean] {
+    override def combine(x: Boolean, y: Boolean): Boolean = (x || !y) && (!x || y)
+    override def empty: Boolean = true
   }
 }
 
@@ -41,7 +47,7 @@ object Exercise2 {
   object Monoid {
     implicit val union: Monoid[Set[Int]] = new Monoid[Set[Int]] {
       override def combine(x: Set[Int], y: Set[Int]): Set[Int] = x union y
-      override def identity: Set[Int] = Set.empty
+      override def empty: Set[Int] = Set.empty
     }
   }
 
@@ -55,6 +61,16 @@ object Exercise2 {
 
 object Exercise3 {
   import cats.{Monoid => CMonoid}
+  import cats.instances.boolean.catsKernelStdOrderForBoolean
+
+  def main(): Unit = {
+    import cats.instances.option._
+    import cats.syntax.option._
+    import cats.instances.int._
+    println(add(List(1.some, 2.some, none[Int])))
+    println(add(List(Order)))
+  }
+
   def add[T](items: List[T])(implicit monoid: CMonoid[T]): T = items.foldLeft(monoid.empty) {
     (acc, item) => monoid.combine(acc, item)
   }

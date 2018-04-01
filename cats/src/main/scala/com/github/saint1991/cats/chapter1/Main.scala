@@ -81,7 +81,7 @@ object Main extends App {
     import cats.syntax.eq._
     import cats.instances.option._
 
-    implicit val catEq = Eq.instance[Cat] { (c1, c2) =>
+    implicit val catEq: Eq[Cat] = Eq.instance[Cat] { (c1, c2) =>
       c1.name == c2.name && c1.age == c2.age && c1.color == c2.color
     }
 
