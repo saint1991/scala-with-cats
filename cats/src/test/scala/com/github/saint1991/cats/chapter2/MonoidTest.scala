@@ -8,7 +8,7 @@ class MonoidTest extends WordSpec with Matchers {
   private def isAssociative[T](a: T, b: T, c: T)(implicit monoid: Monoid[T]): Boolean =
     monoid.combine(monoid.combine(a, b), c) == monoid.combine(a, monoid.combine(b, c))
   private def hasIdentity[T](a: T)(implicit monoid: Monoid[T]) =
-    monoid.combine(a, monoid.identity) == a && monoid.combine(monoid.identity, a) == a
+    monoid.combine(a, monoid.empty) == a && monoid.combine(monoid.empty, a) == a
 
 
   {

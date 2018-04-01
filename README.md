@@ -22,7 +22,7 @@ So users can use the method to any type T by supplying type class instances to i
  
 ## Chapter2
  
-### [Monoid](./cats/src/main/scala/com/github/saint1991/cats/chapter2)
+### [Monoid](./cats/src/main/scala/com/github/saint1991/cats/chapter2/Monoid.scala)
  
 Monoid is a type class that has following properties.
  
@@ -34,7 +34,7 @@ Monoid is a type class that has following properties.
 and produces a result that is also the same type of arguments.
  
  
-### [Semigroup](./cats/src/main/scala/com/github/saint1991/cats/chapter2)
+### [Semigroup](./cats/src/main/scala/com/github/saint1991/cats/chapter2/Semigroup.scala)
  
 Semigroup is a type class that has following properties
   
@@ -46,3 +46,36 @@ Conversely, Monoid is also Semigroup.
 
 For instances, `NonEmptyList` and `PositiveNumber` does not have identity element so that it is `Semigroup` but not `Monoid` 
 These properties are useful when combining values produced in parallel execution because their completion order is no matter.
+
+## Chapter3
+
+### [Functor](./cats/src/main/scala/com/github/saint1991/cats/chapter3/Functor.scala)
+A Functor is a type class taking type constructor as its type parameter that 
+transform an element of type A into type B within the context.
+Functor `F[A]` has the following property.
+
+1. `(A => B) => F[B]`
+
+Thus, functor chains sequential operations within the closed context.
+
+#### Type Constructor
+A type constructor is a constructor that produce regular type by being filled a type placeholder.
+`List` is a type constructor that can produce regular type `List[Int]` by filling a placeholder with `Int`.
+
+### [Contravariant Functor](./cats/src/main/scala/com/github/saint1991/cats/chapter3/ContravariantFunctor.scala)
+Contravariant Functor has the contramap that prepends an operation.
+
+1. `(B => A) => F[B]`
+
+When given the map function B => A, it can be prepended all methods in `F[B]` thus `F[B]` can be instantiated.
+any methods m of `F[B]` can be implemented using map function f: B => A as `f andThen m`. 
+
+B => A means B is subtype of A.
+It produces `F[B]` from `F[A]` i.e. `F[A] => F[B]`, `F[B]` is regarded as subtype of `F[A]`.
+Therefore it fills covariant's relationship.
+
+
+### [Invariant Functor](./cats/src/main/scala/com/github/saint1991/cats/chapter3/InvariantFunctor.scala)
+Invariant Functor has the imap that transform A in bidirection.
+
+1. `(A <=> B) => F[B]`
