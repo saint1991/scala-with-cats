@@ -5,6 +5,8 @@ import cats.{Functor => CatsFunctor}
 object Main extends App {
 
   catsFunctors()
+  catsContravariants()
+  catsInvariants()
   ex2()
   ex3()
 
@@ -35,7 +37,7 @@ object Main extends App {
     import cats.instances.string._
 
     val showStr: Show[String] = Show[String]
-    val showSym: Show[Symbol] = Contravariant[Show[String]].contramap(showStr) { sym: Symbol =>
+    val showSym: Show[Symbol] = Contravariant[Show].contramap(showStr) { sym: Symbol =>
       s"'${sym.toString()}"
     }
 
@@ -56,7 +58,12 @@ object Main extends App {
   }
 
   private def ex2(): Unit = {
-    import Exercise2._
+
+    import Exercise2.booleanPrintable
+    import Exercise2.stringPrintable
+    import Exercise2.booleanPrintable
+    import Exercise2.printing
+
     printing(true)
     printing("success")
 
@@ -107,13 +114,9 @@ object Exercise2 {
     def format(value: Boolean): String = if(value) "yes" else "no"
   }
 
-
-  implicit def boxStringPrintable(implicit sp: Printable[String]): Printable[Box[String]] =
-    sp.contramap { (box: Box[String]) => s"${box.value}" }
-
-  implicit def boxBooleanPrintable(implicit bp: Printable[Boolean]): Printable[Box[Boolean]] =
-    bp.contramap( (box: Box[Boolean]) => box.value )
-
+  implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] = new Printable[Box[A]] {
+    override def format(value: Box[A]): String = p.format(value.value)
+  }
 
   def printing[T](value: T)(implicit printable: Printable[T]): Unit = println(printable.format(value))
 
@@ -133,11 +136,13 @@ object Exercise3 {
   def encode[A](value: A)(implicit c: Codec[A]): String = c.encode(value)
   def decode[A](value: String)(implicit c: Codec[A]): A = c.decode(value)
 
-  implicit val doubleCodec: Codec[Double] = new Codec[Double] {
-    override def encode(value: Double): String = value.formatted("%.3f")
-    override def decode(value: String): Double = value.toDouble
+  implicit def stringCodec: Codec[String] = new Codec[String] {
+    override def decode(value: String): String = value
+    override def encode(value: String): String = value
   }
 
-  implicit val boxCodec: Codec[Box[Double]] = doubleCodec.imap(value => Box(value), box => box.value)
+  implicit def doubleCodec: Codec[Double] = stringCodec.imap(_.toDouble, _.formatted("%.3f"))
+  implicit def boxCodec[A](implicit codec: Codec[A]): Codec[Box[A]] =
+    stringCodec.imap(a => Box(codec.decode(a)), b => codec.encode(b.value))
 }
 

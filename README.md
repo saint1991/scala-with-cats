@@ -79,3 +79,34 @@ Therefore it fills covariant's relationship.
 Invariant Functor has the imap that transform A in bidirection.
 
 1. `(A <=> B) => F[B]`
+
+
+## Chapter4
+
+### [Monad](./cats/src/main/scala/com/github/saint1991/cats/chapter4/Monad.scala)
+A Monad is a type class taking type constructor as its type parameter. 
+Similar to Functor, it sequences computing but it can also begin new computing sequence on the middle of another sequence.
+Monad has following properties:
+
+1. pure:    `A => F[A]`
+2. flatMap: `()F[A], A => F[B]) => F[B]`
+
+#### Built-in monads in cats
+
+- MonadError
+    - handle errors in monadic way
+- Eval
+    - eager/lazy evaluation and memorization
+- Writer
+    - separate I/O and computation
+- Reader
+    - computation with a placeholder to inject dependencies
+- State
+    - a function that transforms an input state to an output state and then computes a result.
+
+
+|          |  cats  |     Properties      |
+|:--------:|:------:|:-------------------:|
+| val      | Now    | eager,memorized     |
+| def      | Always | lazy, not memorized |
+| lazy val | Later  | lazy, memorized     |

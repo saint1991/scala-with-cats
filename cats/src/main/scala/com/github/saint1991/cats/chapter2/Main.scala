@@ -61,14 +61,12 @@ object Exercise2 {
 
 object Exercise3 {
   import cats.{Monoid => CMonoid}
-  import cats.instances.boolean.catsKernelStdOrderForBoolean
 
   def main(): Unit = {
     import cats.instances.option._
     import cats.syntax.option._
     import cats.instances.int._
     println(add(List(1.some, 2.some, none[Int])))
-    println(add(List(Order)))
   }
 
   def add[T](items: List[T])(implicit monoid: CMonoid[T]): T = items.foldLeft(monoid.empty) {
