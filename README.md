@@ -110,3 +110,9 @@ Monad has following properties:
 | val      | Now    | eager,memorized     |
 | def      | Always | lazy, not memorized |
 | lazy val | Later  | lazy, memorized     |
+
+# Chapter5
+
+### MonadTransformer
+A MonadTransformer wraps 2 nested Monads and provides reasonable flatMap definition according to inner Monad.
+In cats, MonadTransformers are conventionally defined as `{name of Monad}T` like OptionT. 

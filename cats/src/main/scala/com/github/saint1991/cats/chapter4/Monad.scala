@@ -23,3 +23,17 @@ object MonadSyntax {
     def map[B](f: A => B)(implicit monad: Monad[F]): F[B] = monad.map(self)(f)
   }
 }
+
+object OptionMonad extends Monad[Option] {
+  override def pure[A](x: A): Option[A] = Option(x)
+
+  override def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] = fa match {
+    case None => None
+    case Some(a) => f(a)
+  }
+}
+
+object M extends App {
+  val m = OptionMonad
+  m.map(m.pure(1)) { x => x + 1 }
+}

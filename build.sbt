@@ -11,11 +11,9 @@ lazy val root = (project in file("cats"))
     scalacOptions ++= Seq(
       "-encoding", "UTF-8",
       "-deprecation",
-      "-unchecked",
       "-feature",
       "-language:higherKinds",
       "-Xlint",
-      "-Xfatal-warnings",
       "-Ypartial-unification"
     ),
     transitiveClassifiers := Seq("sources"),

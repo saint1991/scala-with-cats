@@ -7,14 +7,14 @@ import scala.language.postfixOps
 
 object Main extends App {
 
-  catsMonad()
-  catsMonadSyntax()
-  catsEither()
+//  catsMonad()
+//  catsMonadSyntax()
+//  catsEither()
 
   Exercise5.useFoldRight()
-  Exercise6.useFactorial()
-  Exercise7.useCheckLogin()
-  Exercise8.useEvalInput()
+//  Exercise6.useFactorial()
+//  Exercise7.useCheckLogin()
+//  Exercise8.useEvalInput()
 
   private def catsMonad(): Unit = {
     import cats.Monad
@@ -95,13 +95,13 @@ object Exercise5 {
 
   import cats.Eval
 
-  def foldRight[A, B](as: List[A], acc: B)(fn: (A, Eval[B]) => Eval[B]): Eval[B] = as match {
-    case Nil => Eval.now(acc)
-    case head :: tail => Eval.defer(fn(head, foldRight(tail, acc)(fn)))
-  }
+//  def foldRight[A, B](as: List[A], acc: B)(fn: (A, Eval[B]) => Eval[B]): Eval[B] = as match {
+//    case Nil => Eval.now(acc)
+//    case head :: tail => Eval.defer(fn(head, foldRight(tail, acc)(fn)))
+//  }
 
   def useFoldRight(): Unit = {
-    val result = foldRight(Iterator.fill(5)(2).toList, 2) { (el, acc) => acc.map(x => x + el) }
+    val result = foldRight(Iterator.fill(5)(2).toList, Eval.now(2)) { (el, acc) => acc.map(x => x + el) }
     println(result.value)
   }
 
@@ -111,14 +111,14 @@ object Exercise5 {
 //  }
 
 //  foldRight implementation in cats
-//  def foldRight[A, B](fa: List[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = {
-//    def loop(as: List[A]): Eval[B] =
-//      as match {
-//        case Nil => lb
-//        case h :: t => f(h, Eval.defer(loop(t)))
-//      }
-//    Eval.defer(loop(fa))
-//  }
+  def foldRight[A, B](fa: List[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = {
+    def loop(as: List[A]): Eval[B] =
+      as match {
+        case Nil => lb
+        case h :: t => f(h, Eval.defer(loop(t)))
+      }
+    Eval.defer(loop(fa))
+  }
 
 
 //  def foldRight2[A, B](as: List[A], acc: Eval[B])(fn: (A, Eval[B]) => Eval[B]): Eval[B] = as match {
@@ -280,5 +280,27 @@ object Exercise9 {
       loop(f(a))
     }
   }
+//
+//  val tailRecTreeMonad: CMonad[Tree] = new CMonad[Tree] {
+//
+//    override def pure[A](x: A): Tree[A] = Leaf(x)
+//
+//    override def flatMap[A, B](fa: Tree[A])(f: A => Tree[B]): Tree[B] = ???
+//
+//    override def tailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
+//
+//      @tailrec
+//      def loop(stack: List[Tree[Either[A, B]]], acc: Tree[B]): Tree[B] = stack match {
+//        case head :: tail => head match {
+//          case Leaf(Left(x)) => loop(f(x) :: tail, acc)
+//          case Leaf(Right(x)) => loop(tail, acc) // TODO add this node to acc
+//          case Branch(left, right) => loop(left :: right :: tail, acc)
+//        }
+//        case Nil => acc
+//      }
+//
+//      // loop(f(a) :: Nil, Leaf(B())) // TODO what should be put as the 2nd arg ???
+//    }
+//  }
 
 }
