@@ -89,9 +89,9 @@ Similar to Functor, it sequences computing but it can also begin new computing s
 Monad has following properties:
 
 1. pure:    `A => F[A]`
-2. flatMap: `()F[A], A => F[B]) => F[B]`
+2. flatMap: `(F[A])(A => F[B]) => F[B]`
 
-#### Built-in monads in cats
+### Built-in Monads in Cats
 
 - MonadError
     - handle errors in monadic way
@@ -113,6 +113,42 @@ Monad has following properties:
 
 # Chapter5
 
-### MonadTransformer
+## MonadTransformer
 A MonadTransformer wraps 2 nested Monads and provides reasonable flatMap definition according to inner Monad.
 In cats, MonadTransformers are conventionally defined as `{name of Monad}T` like OptionT. 
+
+
+# Chapter6
+
+## Semigroupal
+
+Semigroupal is a type class that takes 2 parameters typed `F[A]`, `F[B]` and produce a tupled value within a context `F[(A, B)]`.
+It has following property:
+
+1. product: `(F[A], F[B]) => F[(A, B)]`
+
+### Built-in Semigroupal in Cats
+
+- Validated
+    - accumulate left value by combining them using Semigroup
+- ValidatedNel
+    - Validated with NonEmptyList as its left values.
+    
+## Apply
+
+Apply extends Semigroupal and Functor so it has following properties:
+
+1. product: `(F[A], F[B]) => F[(A, B)]`
+2. ap: `(F[A => B])(F[A]) => F[B]`
+
+## Applicative Functor
+
+Applicative Functor extends Apply and has pure so it has following properties:
+
+1. product: `(F[A], F[B]) => F[(A, B)]`
+2. ap: `(F[A => B])(F[A]) => F[B]`
+3. pure: `A => F[A]`
+
+## Hierarchy
+
+Refer to [Cats infographic](https://github.com/tpolecat/cats-infographic)
