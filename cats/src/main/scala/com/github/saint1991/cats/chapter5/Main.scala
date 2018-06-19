@@ -62,7 +62,6 @@ object Main extends App {
     import cats.instances.future._
     import cats.syntax.either._
 
-
     type Response[A] = EitherT[Future, String, A]
 
     val powerLevels = Map(
@@ -71,10 +70,10 @@ object Main extends App {
       "Hot Rod"   -> 10
     )
 
-    def getPowerLevel(autobot: String): Response[Int] = EitherT(powerLevels.get(autobot) match {
-      case None => s"Comms error: $autobot unreacable".asLeft.pure[Future]
-      case Some(level) => level.asRight.pure[Future]
-    })
+    def getPowerLevel(autobot: String): Response[Int] = EitherT((powerLevels.get(autobot) match {
+      case None => s"Comms error: $autobot unreacable".asLeft
+      case Some(level) => level.asRight
+    }).pure[Future])
 
     def canSpecialMove(ally1: String, ally2: String): Response[Boolean] = {
       val levelOfAlly1 = getPowerLevel(ally1)
