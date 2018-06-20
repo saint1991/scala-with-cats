@@ -18,9 +18,8 @@ object Main extends App {
 
     override def pure[A](a: A): Composed[A] = a.pure[Option].pure[List]
 
-    override def flatMap[A, B](fa: Composed[A])(f: A => Composed[B]): Composed[B] = fa.flatMap { x =>
-      x.fold[Composed[B]](none.pure[List])(f)
-    }
+    override def flatMap[A, B](fa: Composed[A])(f: A => Composed[B]): Composed[B] =
+      fa.flatMap (_.fold[Composed[B]](None.pure[List])(f))
 
     override def tailRecM[A, B](a: A)(f: A => Composed[Either[A, B]]): Composed[B] = {
       def loop(fab: Composed[Either[A, B]]): List[Option[B]] = fab.flatMap {

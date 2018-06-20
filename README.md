@@ -152,3 +152,21 @@ Applicative Functor extends Apply and has pure so it has following properties:
 ## Hierarchy
 
 Refer to [Cats infographic](https://github.com/tpolecat/cats-infographic)
+
+# Chapter7
+
+## Foldable
+
+Foldable is a type class that have foldLeft and foldRight that are flexible way to iterate elements in a context 
+and returning a result.
+
+
+1. foldLeft:  `(F[A], B)((B, A) => B) => B`
+2. foldRight: `(F[A], B)((A, B) => B) => B`
+
+## Traverse
+
+Traverse is more formulated than Foldable that it combines the result by Applicative#product.
+
+1. traverse: `(F[A])(A => G[B]): G[F[B]]`
+2. sequence: `(F[G[B]]): G[F[B]]`
