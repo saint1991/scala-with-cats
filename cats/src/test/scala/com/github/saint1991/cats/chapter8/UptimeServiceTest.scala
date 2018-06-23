@@ -2,7 +2,7 @@ package com.github.saint1991.cats.chapter8
 
 import scala.concurrent.Future
 
-import cats.{Applicative, Functor, Id}
+import cats.{Applicative, Id}
 import cats.syntax.functor._
 import cats.instances.list._
 import cats.syntax.traverse._
@@ -16,28 +16,23 @@ object TestSubjectives {
     def getTotalUptime(hostnames: List[String]): F[Int] =  hostnames.traverse(client.getUptime).map(_.sum)
   }
 
-
-//  trait UptimeClient {
-//    def getUptime(hostname: String): Future[Int]
-//  }
-
   trait UptimeClient[F[_]] {
-    def getUptime(hostname: String)(implicit f: Functor[F]): F[Int]
+    def getUptime(hostname: String): F[Int]
   }
 
   trait RealUptimeClient extends UptimeClient[Future] {
-    override def getUptime(hostname: String)(implicit f: Functor[Future]): Future[Int]
+    override def getUptime(hostname: String): Future[Int]
   }
 
   // mock client
   class TestUptimeClient(hosts: Map[String, Int]) extends UptimeClient[Id] {
-    override def getUptime(hostname: String)(implicit f: Functor[Id]): Id[Int] = hosts.getOrElse(hostname, 0)
+    override def getUptime(hostname: String): Id[Int] = hosts.getOrElse(hostname, 0)
   }
 
 }
 
 
-class AsyncTest extends WordSpec with Matchers {
+class UptimeServiceTest extends WordSpec with Matchers {
 
   import TestSubjectives._
 
@@ -52,7 +47,6 @@ class AsyncTest extends WordSpec with Matchers {
         )
         val client = new TestUptimeClient(hosts)
         val service = new UptimeService(client)
-
 
         val expected = hosts.values.sum // = 16
         val actual = service.getTotalUptime(hosts.keys.toList)
