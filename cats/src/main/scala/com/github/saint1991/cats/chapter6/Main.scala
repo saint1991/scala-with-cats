@@ -8,6 +8,7 @@ import cats.instances.option._
 import cats.instances.list._
 import cats.instances.either._
 
+
 object Main extends App {
 
   useSemigroupal()
@@ -82,6 +83,51 @@ object Main extends App {
     println(validate(Map.empty))
     println(validate(Map("name" -> "Mike")))
     println(validate(Map("age" -> "18")))
+  }
+
+  private def exercise3(): Unit = {
+
+    import cats.syntax.apply._
+    import cats.syntax.either._
+
+    case class User(name: String, age: Int)
+    type FormData = Map[String, String]
+    type FailFast[A] = Either[List[String], A]
+    type FailSlow[A] = Validated[List[String], A]
+    type NumFmtExn = NumberFormatException
+
+    def getValue(name: String)(form: FormData): Either[List[String], String] =
+      Either.fromOption(form.get("name"), "name is required" :: Nil)
+
+    def parseInt(name: String)(data: String): FailFast[Int] =
+      Either.catchOnly[NumFmtExn](data.toInt).
+        leftMap(_ => List(s"$name must be an integer"))
+
+    def nonBlank(name: String)(data: String): FailFast[String] =
+      Right[List[String], String](data).
+        ensure(List(s"$name cannot be blank"))(_.nonEmpty)
+
+    def nonNegative(name: String)(data: Int): FailFast[Int] =
+      Right[List[String], Int](data).
+        ensure(List(s"$name must be non-negative"))(_ >= 0)
+
+
+
+    def readName(data: FormData): FailFast[String] = for {
+      name <- getValue("name")(data)
+      _ <- nonBlank("name")(name)
+    } yield name
+
+    def readAge(data: FormData): Either[List[String], Int] = for {
+      age <- getValue("age")(data)
+      iage <- parseInt("age")(age)
+      vage <- nonNegative("age")(iage)
+    } yield vage
+
+    def validate(form: FormData): Validated[List[String], User] =
+      (readName(form).toValidated, readAge(form).toValidated).mapN(User.apply)
+
+
   }
 
 }

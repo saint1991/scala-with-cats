@@ -97,9 +97,5 @@ object Main extends App {
 
   }
 
-  def exercise4(): Unit = {
-
-
-  }
 
 }
