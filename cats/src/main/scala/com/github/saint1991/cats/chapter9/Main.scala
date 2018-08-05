@@ -31,13 +31,14 @@ object Main extends App {
     def parallelFoldMap[A, B : Monoid](values: Vector[A])(f: A => B): Future[B] = {
 
       val cores = Runtime.getRuntime.availableProcessors()
-      val batches: Seq[Vector[A]] = values.grouped(values.length / cores + 1).toList
+      val groups: Iterator[Vector[A]] = values.grouped(values.length / cores + 1)
 
-      Future.sequence(
-        batches.map { v => Future ( foldMap(v)(f) )}
-      ) map { r =>
+      val futures: Iterator[Future[B]] = groups.map { v => Future ( foldMap(v)(f) )}
+
+      val finalResult = Future.sequence(futures) map { r =>
         foldMap(r.toVector)(identity)
       }
+      finalResult
     }
 
     println(Await.result(parallelFoldMap((1 to 1000).toVector)(identity), 10 seconds))
