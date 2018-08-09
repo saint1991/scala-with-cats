@@ -1,6 +1,5 @@
 package com.github.saint1991.cats.chapter4
 
-import scala.annotation.tailrec
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
