@@ -1,5 +1,7 @@
 package com.github.saint1991.cats.chapter10
 
+import scala.annotation.tailrec
+
 import cats.Semigroup
 import cats.data.{NonEmptyList, Validated}
 import cats.data.Validated.{Invalid, Valid}
@@ -242,6 +244,7 @@ object Exercise5 extends App {
       case Valid(a) => f(a)
     }
 
+    @tailrec
     override def tailRecM[A, B](a: A)(f: A => Result[Either[A, B]]): Result[B] = f(a) match {
       case iv @ Invalid(_) => iv
       case Valid(Right(b)) => Valid(b)
