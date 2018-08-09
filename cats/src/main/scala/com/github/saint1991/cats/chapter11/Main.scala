@@ -1,6 +1,6 @@
 package com.github.saint1991.cats.chapter11
 
-import cats.{Id, MonoidK}
+import cats.MonoidK
 import cats.kernel.Monoid
 
 object Exercise1 {

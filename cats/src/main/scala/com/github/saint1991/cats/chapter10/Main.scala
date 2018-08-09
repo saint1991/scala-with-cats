@@ -39,6 +39,13 @@ object Exercise1 {
         case (_, Left(e2)) => Left(e2)
         case _ => Right(a)
       }
+      case Or(left, right) => left(a) match {
+        case a @ Right(_) => a
+        case Left(e1) => right(a) match {
+          case b @ Right(_) => b
+          case Left(e2) => Left(e1 |+| e2)
+        }
+      }
       case Pure(f) => f(a)
     }
   }
@@ -88,7 +95,6 @@ object Exercise3 {
 
   import cats.syntax.apply._
   import cats.syntax.semigroup._
-  import cats.instances.all._
 
   object Predicate {
 
@@ -195,7 +201,6 @@ object Utilities {
 object Exercise4 extends App {
 
   import cats.syntax.apply._
-  import cats.instances.string._
   import Utilities._
   import Exercise3._
 
